@@ -1,5 +1,5 @@
 #HW2 Shell Program
-#### First-Name Last-Name
+#### sanam shikalgar
 TODO - Update your name in this readme.
 
 TODO - Add a badge from travis CI here
