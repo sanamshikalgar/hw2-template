@@ -16,7 +16,7 @@ int g_command_count = 0;                            //helper used inside display
  * Adds a command to the history.
  * @post The command has been added to the g_history[] data structure.
  */
-int addCommandToHistory(char addCommand[], int current) //void to int
+int addCommandToHistory(char addCommand[], int current)
 {
     //TODO: add the command into the history here.
     int temp;
@@ -24,7 +24,7 @@ int addCommandToHistory(char addCommand[], int current) //void to int
         exit(0);
     if (current < 0)
     {
-        perror("error reading the command");
+        perror("error reading the command"); //TODO: use perror() to indicate errors
         exit(-1);           /* terminate with error code of -1 */
     }
     else
@@ -36,7 +36,7 @@ int addCommandToHistory(char addCommand[], int current) //void to int
             {
                 if(g_command_count==0)
                 {
-                    printf("No recent command can be found in the history. \n");
+                    printf("No recent command found. \n");
                     return 0;
                 }
                 strcpy(addCommand,g_history[(g_command_count)% HISTORY_SIZE]);
@@ -100,7 +100,6 @@ int setup(char inputBuffer[], char *args[])
     }
 
     while (inputBuffer[0] == '\n');
-    //ignore newline characters
     /**
      * Add the command to the history
      */
@@ -114,7 +113,7 @@ int setup(char inputBuffer[], char *args[])
      * Parse the contents of inputBuffer
      */
     for (i = 0; i < m_inputLength; i++)
-    {  //Parse every character in the inputBuffer
+    {
         //TODO parse every character
         //TODO use ' ' as the seperator between arguments
         //TODO store the arguments into args[] which will eventually be passed back into the shell function.
@@ -123,7 +122,7 @@ int setup(char inputBuffer[], char *args[])
         switch (inputBuffer[i])
         {
             case ' ':
-            case '\t' :               /* argument separators */
+            case '\t' :
                 if(start != -1)
                 {
                     args[argumentCharacterCounter] = &inputBuffer[start];    /* set up pointer */
@@ -178,47 +177,55 @@ int shell(int argc, char *argv[])
     int m_status;                                 //result from execvp system call*/
     int m_isValidCommand = 1;
 
-    while (42) {  //Program terminates when you enter the 'exit' command
+    while (42)
+    {  //Program terminates when you enter the 'exit' command
 
 
         m_isValidCommand = setup(m_inputBuffer, args);       //get next command
 
         if (strncmp(m_inputBuffer, "exit", 4) == 0)
             return 0;
-        else if (strncmp(m_inputBuffer, "g_history", 7) == 0) {
+        else if (strncmp(m_inputBuffer, "g_history", 7) == 0)
+        {
             displayHistory();
             continue;
         }
 
         // Start the external command execution here
-        if (m_isValidCommand) {
+        if (m_isValidCommand)
+        {
             //TODO: use fork to create a child
-            m_child = fork();
+            m_child = fork();               /* fork a child process */
+
             if(m_child < 0)
-            { /* if the child process didn't return 0, the fork is failed */
-                printf("Fork failed! \n");
-            }else if(m_child==0)
-            { /* child process */
-                if(m_inputBuffer[0]=='history' || m_inputBuffer[0] =='h'){
+            {
+                printf("Fork Failed \n");  /* error occurred */
+            }
+            else if(m_child==0)             /* child process */
+            {
+                if(m_inputBuffer[0]=='history' || m_inputBuffer[0] =='h')
+                {
                     displayHistory();
                     return 0;
                 }
+                //TODO: use execvp inside the child to start the program passed in as argument
+
                 m_status = execvp(args[0],args);
-                if(m_status !=0){
+
+                if(m_status !=0)
+                {
                     printf("%s: command not found. \n", args[0]);
                 }
 
             }
-            /* create a child process*/
-            //TODO: use perror() to indicate errors
-            //TODO: use execvp inside the child to start the program passed in as argument
-            //TODO: make the parent wait for the child
 
-        } else {
+        }
+        else
+        {
             printf("Invalid command!\n");
         }
     }
 
 
-    return 0;
+    return 42;
 }
