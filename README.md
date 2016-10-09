@@ -6,6 +6,7 @@ TODO - Update your name in this readme.
 
 TODO - Add a badge from travis CI here
 
+[![Build Status](https://travis-ci.org/sanamshikalgar/hw2-template.svg?branch=master)](https://travis-ci.org/sanamshikalgar/hw2-template)
 
 ## Problem statement:
 
